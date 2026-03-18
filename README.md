@@ -190,9 +190,7 @@ docker compose exec db pg_isready -U postgres
 docker compose exec backend wget -qO- http://localhost:5000/health
 ```
 
-## License
 
-MIT
 
 ## Deployment Notes
 - Replace hard-coded origins and database credentials with environment variables before deploying.
