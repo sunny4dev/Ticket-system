@@ -1,3 +1,5 @@
+name: Build & Push Docker Images
+
 on:
   pull_request:
     branches:
@@ -6,5 +8,39 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      # 1️⃣ Clone the repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Log in to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3️⃣ Build backend image (tagged with commit SHA)
+      - name: Build backend image
+        run: |
+          docker build \
+            -t sunseyy/ticketing-backend:${{ github.sha }} \
+            ./backend
+
+      # 4️⃣ Push backend image
+      - name: Push backend image
+        run: |
+          docker push sunseyy/ticketing-backend:${{ github.sha }}
+
+      # 5️⃣ Build frontend image (tagged with commit SHA)
+      - name: Build frontend image
+        run: |
+          docker build \
+            -t sunseyy/ticketing-frontend:${{ github.sha }} \
+            ./frontend
+
+      # 6️⃣ Push frontend image
+      - name: Push frontend image
+        run: |
+          docker push sunseyy/ticketing-frontend:${{ github.sha }}
